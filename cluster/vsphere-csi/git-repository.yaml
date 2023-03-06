@@ -9,7 +9,7 @@ spec:
   interval: 30m
   url: https://github.com/kubernetes-sigs/vsphere-csi-driver
   ref:
-    tag: v2.7.0
+    tag: v2.7.1
   ignore: |
     # exclude all
     /*
