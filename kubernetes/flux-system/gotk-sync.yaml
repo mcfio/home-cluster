@@ -9,7 +9,7 @@ spec:
   interval: 6h
   url: oci://ghcr.io/mcfio/kubernetes-manifests/home-cluster
   ref:
-    tag: main
+    tag: main@sha256:0e8812f83a63e50ff47c444c6a3dd58bea73e5ad17b85ee34baf2d7520489b94
   verify:
     provider: cosign
 ---
