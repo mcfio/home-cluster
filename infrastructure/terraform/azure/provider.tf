@@ -1,6 +1,6 @@
 terraform {
   required_providers {
-    azurerm = "~>3.0"
+    azurerm = "~> 3.83.0"
     azuread = "~>2.0"
     random  = "~>3.0"
     time    = "~>0.9"
