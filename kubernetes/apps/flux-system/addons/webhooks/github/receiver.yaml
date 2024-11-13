@@ -8,11 +8,9 @@ spec:
   type: github
   events:
     - ping
-    - push
-    - workflow_run
+    - package
   secretRef:
     name: github-webhook-token
   resources:
-    - apiVersion: source.toolkit.fluxcd.io/v1beta2
-      kind: OCIRepository
+    - kind: OCIRepository
       name: home-cluster

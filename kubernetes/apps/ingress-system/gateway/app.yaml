@@ -3,22 +3,21 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &appname cilium
+  name: &appname cilium-gateway
   namespace: flux-system
 spec:
-  targetNamespace: kube-system
+  targetNamespace: ingress-system
   commonMetadata:
     labels:
       app.kubernetes.io/name: *appname
-  interval: 12h
-  path: ./apps/kube-system/cilium/resources
   dependsOn:
     - name: gateway-api-crds
-  prune: false # do not remove CNI
+    - name: cilium-config
+  path: ./apps/ingress-system/gateway/resources
+  prune: true
   sourceRef:
     kind: OCIRepository
     name: home-cluster
     namespace: flux-system
-  wait: true
-  retryInterval: 1m
-  timeout: 10m
+  wait: false
+  interval: 12h
