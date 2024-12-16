@@ -96,10 +96,6 @@ spec:
               namespace: ingress-system
               sectionName: https
       prometheusSpec:
-        image:
-          registry: quay.io
-          repository: prometheus/prometheus
-          tag: v3.0.1
         scrapeInterval: 1m # Matches interval from Grafana helm chart
         ruleSelectorNilUsesHelmValues: false
         serviceMonitorSelectorNilUsesHelmValues: false
