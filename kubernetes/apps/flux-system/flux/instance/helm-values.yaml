@@ -12,6 +12,7 @@ instance:
     - notification-controller
   sync:
     kind: OCIRepository
+    name: cluster-manifests
     url: oci://ghcr.io/mcfio/kubernetes-manifests/home-cluster
     ref: main
     path: flux/config
