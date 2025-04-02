@@ -23,7 +23,7 @@ jobs:
 
       - name: Get Changed Files
         id: changed-files
-        uses: tj-actions/changed-files@2f7c5bfce28377bc069a65ba478de0a74aa0ca32 # v46.0.1
+        uses: tj-actions/changed-files@823fcebdb31bb35fdf2229d9f769b400309430d0 # v46.0.3
         with:
           files: kubernetes/**
 
@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
       - name: Run flux-local test
-        uses: docker://ghcr.io/allenporter/flux-local:v7.2.1
+        uses: docker://ghcr.io/allenporter/flux-local:v7.3.0
         with:
           args: test --enable-helm --all-namespaces --path /github/workspace/kubernetes/flux/config --sources "cluster-manifests=./kubernetes" -v
 
@@ -68,7 +68,7 @@ jobs:
           path: default
 
       - name: Run flux-local Diff
-        uses: docker://ghcr.io/allenporter/flux-local:v7.2.1
+        uses: docker://ghcr.io/allenporter/flux-local:v7.3.0
         with:
           args: >-
             diff ${{ matrix.resources }}
@@ -100,7 +100,7 @@ jobs:
       - name: Generate Token
         if: ${{ steps.diff.outputs.diff != '' }}
         id: app-token
-        uses: actions/create-github-app-token@21cfef2b496dd8ef5b904c159339626a10ad380e # v1
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1
         with:
           app-id: ${{ secrets.BOT_APP_ID }}
           private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
