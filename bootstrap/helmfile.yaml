@@ -15,7 +15,7 @@ releases:
   - name: prometheus-operator-crds
     namespace: monitoring
     chart: oci://ghcr.io/prometheus-community/charts/prometheus-operator-crds
-    version: 19.0.0
+    version: 19.1.0
 
   - name: cilium
     namespace: kube-system
@@ -29,7 +29,7 @@ releases:
   - name: talos-ccm
     namespace: kube-system
     chart: oci://ghcr.io/siderolabs/charts/talos-cloud-controller-manager
-    version: 0.4.4
+    version: 0.4.5
     values:
       - ../kubernetes/apps/kube-system/talos-ccm/resources/helm-values.yaml
     needs:
