@@ -5,6 +5,7 @@ kind: Kustomization
 namespace: default
 components:
   - ../../components/common
+  - ../../components/app-template
 resources:
   - ./cnpg-cluster/app.yaml
   - ./sonarr/app.yaml
@@ -18,4 +19,3 @@ resources:
   - ./recyclarr/app.yaml
   - ./overseerr/app.yaml
   - ./zigbee2mqtt/app.yaml
-  # - ./zwave-js-ui/app.yaml

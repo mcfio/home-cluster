@@ -1,0 +1,54 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.mcf.io/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &appname external-dns-cloudflare
+spec:
+  interval: 12h
+  maxHistory: 3
+  chartRef:
+    kind: OCIRepository
+    name: external-dns
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    fullnameOverride: *appname
+    podAnnotations:
+      secret.reloader.stakater.com/reload: &secret external-dns-cloudflare-secret
+    provider:
+      name: cloudflare
+    env:
+      - name: CF_API_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: *secret
+            key: CLOUDFLARE_API_TOKEN
+    extraArgs:
+      - --cloudflare-dns-records-per-page=1000
+      - --cloudflare-proxied
+      - --crd-source-apiversion=externaldns.k8s.io/v1alpha1
+      - --crd-source-kind=DNSEndpoint
+      - --gateway-name=external
+    sources:
+      - crd
+      - gateway-httproute
+    domainFilters:
+      - mcf.io
+    excludeDomains:
+      - milton.mcf.io
+    policy: sync
+    txtPrefix: k8s.
+    txtOwnerId: home-cluster
+    resources:
+      requests:
+        cpu: 10m
+      limits:
+        memory: 90M
+    serviceMonitor:
+      enabled: true
