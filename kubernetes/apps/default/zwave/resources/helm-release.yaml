@@ -26,15 +26,18 @@ spec:
           zwave:
             image:
               repository: ghcr.io/zwave-js/zwave-js-ui
-              tag: 10.8.0@sha256:d8f23d86505ec9ddfbf26d2b25b47272662c1f61d283593c8317c23c8baa0706
+              tag: 10.9.0@sha256:6db7cdfde1a037b5263e4434d0890619710772464ef72477d1be6c3c3c6b5419
             env:
               TZ: Canada/Eastern
               TRUST_PROXY: 10.45.0.0/16
-            envFrom:
-              - secretRef:
-                  name: "{{ .Release.Name }}-secret"
             probes:
-              liveness: &probes
+              liveness: &probe
+                enabled: true
+                type: HTTP
+                path: /health
+                port: &port 8091
+              readiness: *probe
+              startup:
                 enabled: true
                 custom: true
                 spec:
@@ -43,12 +46,11 @@ spec:
                       - name: Accept
                         value: text/plain
                     path: /health
-                    port: &port 8091
-                  initialDelaySeconds: 0
+                    port: *port
+                  initialDelaySeconds: 5
                   periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness: *probes
+                  failureThreshold: 6
+                  successThreshold: 1
             resources:
               requests:
                 cpu: 10m
@@ -56,20 +58,25 @@ spec:
               limits:
                 memory: 512Mi
             securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities:
-                drop:
-                  - ALL
+              privileged: true
+              # allowPrivilegeEscalation: false
+              # readOnlyRootFilesystem: true
+              # capabilities:
+              #   drop:
+              #     - ALL
+              #   add:
+              #     - SYS_RAWIO
     defaultPodOptions:
-      # nodeSelector:
-      #   aeotec.feature.node.kubernetes.io/zwave: "true"
+      nodeSelector:
+        aeotec.feature.node.kubernetes.io/zwave: "true"
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 568
-        runAsGroup: 568
-        fsGroup: 568
-        fsGroupChangePolicy: OnRootMismatch
+        # runAsNonRoot: true
+        # runAsUser: 568
+        # runAsGroup: 568
+        # fsGroup: 568
+        # fsGroupChangePolicy: OnRootMismatch
+        supplementalGroups:
+          - 20
         seccompProfile:
           type: RuntimeDefault
     service:
@@ -93,10 +100,10 @@ spec:
         existingClaim: zwave
         globalMounts:
           - path: /usr/src/app/store
-      # usb:
-      #   enabled: true
-      #   type: hostPath
-      #   hostPath: /dev/ttyUSB0
-      #   hostPathType: CharDevice
-      #   globalMounts:
-      #     - path: /dev/zwave
+      usb:
+        enabled: true
+        type: hostPath
+        hostPath: /dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_ee8903ec48e5ea11b68584d5994a5d01-if00-port0
+        hostPathType: CharDevice
+        globalMounts:
+          - path: /dev/zwave
