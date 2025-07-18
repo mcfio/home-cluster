@@ -21,7 +21,12 @@ spec:
     alertmanagerAddress: http://kube-prometheus-stack-alertmanager:9093
     image:
       registry: quay.io
-      name: giantswarm/silence-operator
-      tag: 0.16.1
     networkPolicy:
       enabled: false
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/arch
+            operator: In
+            values: ["amd64"]
