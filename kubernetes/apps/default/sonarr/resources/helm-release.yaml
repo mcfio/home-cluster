@@ -20,8 +20,6 @@ spec:
   values:
     controllers:
       sonarr:
-        labels:
-          app.kubernetes.io/depends-on: cnpg-cluster
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -38,20 +36,9 @@ spec:
               SONARR__LOG__DBENABLED: "False"
               SONARR__LOG__LEVEL: info
               SONARR__SERVER__PORT: &port 8989
-              SONARR__POSTGRES__HOST: cnpg-cluster-rw.default.svc.cluster.local
-              SONARR__POSTGRES__PORT: "5432"
-              SONARR__POSTGRES__MAINDB: ${dbName}
-              SONARR__POSTGRES__USER:
-                secretKeyRef:
-                  name: sonarr-db-secret
-                  key: username
-              SONARR__POSTGRES__PASSWORD:
-                secretKeyRef:
-                  name: sonarr-db-secret
-                  key: password
             envFrom:
-              - secretRef:
-                  name: "{{ .Release.Name }}-secret"
+            - secretRef:
+                name: "{{ .Release.Name }}-secret"
             probes:
               liveness: &probes
                 enabled: true
@@ -75,7 +62,7 @@ spec:
               allowPrivilegeEscalation: false
               capabilities:
                 drop:
-                  - ALL
+                - ALL
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -84,7 +71,7 @@ spec:
         fsGroup: 568
         fsGroupChangePolicy: OnRootMismatch
         supplementalGroups:
-          - 100 # nfs.cluster:users
+        - 100 # nfs.cluster:users
         seccompProfile:
           type: RuntimeDefault
     service:
@@ -95,22 +82,33 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.milton.mcf.io"
+        - "{{ .Release.Name }}.milton.mcf.io"
         parentRefs:
-          - name: internal
-            namespace: ingress-system
-            sectionName: https
+        - name: internal
+          namespace: ingress-system
+          sectionName: https
     persistence:
       config:
+        existingClaim: "{{ .Release.Name }}"
+      cache:
         enabled: true
+        suffix: cache
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 10Gi
+        globalMounts:
+        - path: /config/MediaCover
       media:
         type: nfs
-        server: nfs.cluster.milton.mcf.io
-        path: /mnt/storage/media
+        server: kaitain.internal
+        path: /shows
         globalMounts:
-          - path: /media
+        - path: /media/shows
+      downloads:
+        type: nfs
+        server: nfs.cluster.milton.mcf.io
+        path: /mnt/storage/media/downloads
+        globalMounts:
+        - path: /media/downloads
       tmp:
         type: emptyDir

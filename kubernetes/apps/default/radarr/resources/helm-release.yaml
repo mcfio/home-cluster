@@ -20,15 +20,13 @@ spec:
   values:
     controllers:
       radarr:
-        labels:
-          app.kubernetes.io/depends-on: cnpg-cluster
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
               repository: ghcr.io/home-operations/radarr
-              tag: 5.27.2.10142@sha256:aa84b8341e2b53281bcea4696427861e4ab02ab004cd76a1b3a76d77ea065ac5
+              tag: 5.27.3.10153@sha256:1bf822eaf3d944dc994656c3a712a89df0d88f5f46731af4fccc90c5e0333167
             env:
               TZ: Canada/Eastern
               RADARR__APP__INSTANCENAME: Radarr
@@ -38,22 +36,9 @@ spec:
               RADARR__lOG__DBENABLED: "False"
               RADARR__lOG__LEVEL: info
               RADARR__SERVER__PORT: &port 7878
-              RADARR__POSTGRES__HOST: cnpg-cluster-rw.default.svc.cluster.local
-              RADARR__POSTGRES__PORT: "5432"
-              RADARR__POSTGRES__MAINDB: ${dbName}
-              RADARR__POSTGRES__USER:
-                valueFrom:
-                  secretKeyRef:
-                    name: radarr-db-secret
-                    key: username
-              RADARR__POSTGRES__PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: radarr-db-secret
-                    key: password
             envFrom:
-              - secretRef:
-                  name: "{{ .Release.Name }}-secret"
+            - secretRef:
+                name: "{{ .Release.Name }}-secret"
             probes:
               liveness: &probes
                 enabled: true
@@ -77,7 +62,7 @@ spec:
               allowPrivilegeEscalation: false
               capabilities:
                 drop:
-                  - ALL
+                - ALL
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -86,7 +71,7 @@ spec:
         fsGroup: 568
         fsGroupChangePolicy: OnRootMismatch
         supplementalGroups:
-          - 100 # nfs.cluster:users
+        - 100 # nfs.cluster:users
         seccompProfile:
           type: RuntimeDefault
     service:
@@ -97,17 +82,18 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.milton.mcf.io"
+        - "{{ .Release.Name }}.milton.mcf.io"
         parentRefs:
-          - name: internal
-            namespace: ingress-system
-            sectionName: https
+        - name: internal
+          namespace: ingress-system
+          sectionName: https
     persistence:
       config:
-        enabled: true
-        type: persistentVolumeClaim
-        accessMode: ReadWriteOnce
-        size: 10Gi
+        existingClaim: "{{ .Release.Name }}"
+      config-cache:
+        existingClaim: "{{ .Release.Name }}-cache"
+        globalMounts:
+        - path: /config/MediaCover
       media:
         type: nfs
         server: nfs.cluster.milton.mcf.io
