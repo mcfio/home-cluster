@@ -12,7 +12,6 @@ spec:
   install:
     disableHooks: true
   upgrade:
-    cleanupOnFail: true
     disableHooks: true
   values:
     localpv-provisioner:
