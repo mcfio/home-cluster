@@ -56,7 +56,7 @@ spec:
                   remediation:
                     strategy: rollback
                     retries: 2
-                    remediateLastFailure: false
+                    remediateLastFailure: true
                 rollback:
                   cleanupOnFail: true
                   recreate: true
