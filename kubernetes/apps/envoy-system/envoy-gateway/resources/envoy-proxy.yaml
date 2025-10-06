@@ -5,6 +5,7 @@ kind: EnvoyProxy
 metadata:
   name: envoy
 spec:
+  mergeGateways: true
   logging:
     level:
       default: info
