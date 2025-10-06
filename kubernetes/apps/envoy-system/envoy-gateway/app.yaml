@@ -6,7 +6,7 @@ metadata:
   name: envoy-gateway
 spec:
   interval: 12h
-  path: ./kubernetes/apps/network/envoy-gateway/app
+  path: ./kubernetes/apps/envoy-system/envoy-gateway/resources
   prune: true
   sourceRef:
     kind: GitRepository
