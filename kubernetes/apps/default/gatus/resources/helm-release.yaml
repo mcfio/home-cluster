@@ -18,7 +18,7 @@ spec:
           init-config:
             image:
               repository: ghcr.io/home-operations/k8s-sidecar
-              tag: 2.0.3
+              tag: 2.1.2
             env:
               FOLDER: /config
               LABEL: gatus.io/enabled
