@@ -6,9 +6,9 @@ machine:
   token: op://home-cluster/talos/machine/token
   ca:
     crt: op://home-cluster/talos/machine/ca_crt
-    # {% if is_controlplane %}
+    {% if is_controlplane %}
     key: op://home-cluster/talos/machine/ca_key
-    # {% endif %}
+    {% endif %}
   features:
     diskQuotaSupport: true
     hostDNS:
@@ -18,7 +18,7 @@ machine:
     kubePrism:
       enabled: true
       port: 7445
-    # {% if is_controlplane %}
+    {% if is_controlplane %}
     kubernetesTalosAPIAccess:
       enabled: true
       allowedRoles:
@@ -28,7 +28,7 @@ machine:
       - arc-system
       - kube-system
       - system-upgrade
-      # {% endif %}
+    {% endif %}
   files:
   - path: /etc/cri/conf.d/20-customization.part
     op: create
@@ -74,9 +74,9 @@ cluster:
   secret: op://home-cluster/talos/cluster/secret
   ca:
     crt: op://home-cluster/talos/cluster/ca_crt
-    # {% if is_controlplane %}
+    {% if is_controlplane %}
     key: op://home-cluster/talos/cluster/ca_key
-    # {% endif %}
+    {% endif %}
   controlPlane:
     endpoint: https://k8s.internal:6443
   clusterName: home-cluster
@@ -99,7 +99,7 @@ cluster:
   proxy:
     disabled: true
     image: registry.k8s.io/kube-proxy:v1.34.3
-  # {% if is_controlplane %}
+  {% if is_controlplane %}
   aggregatorCA:
     crt: op://home-cluster/talos/cluster/aggregator_ca_crt
     key: op://home-cluster/talos/cluster/aggregator_ca_key
@@ -157,7 +157,7 @@ cluster:
       election-timeout: "5000"
     advertisedSubnets:
     - 192.168.45.0/24
-    # {% endif %}
+  {% endif %}
 ---
 apiVersion: v1alpha1
 kind: LinkAliasConfig
@@ -179,13 +179,6 @@ apiVersion: v1alpha1
 kind: DHCPv4Config
 name: primary0
 clientIdentifier: mac
-# {% if is_controlplane %}
----
-apiVersion: v1alpha1
-kind: Layer2VIPConfig
-name: 192.168.45.66
-link: primary0
-# {% endif %}
 ---
 apiVersion: v1alpha1
 kind: ResolverConfig
