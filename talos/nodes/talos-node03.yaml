@@ -11,11 +11,6 @@ kind: HostnameConfig
 hostname: talos-node03
 ---
 apiVersion: v1alpha1
-kind: Layer2VIPConfig
-name: 192.168.45.66
-link: primary0
----
-apiVersion: v1alpha1
 kind: VolumeConfig
 name: EPHEMERAL
 provisioning:
